@@ -1,0 +1,44 @@
+import os
+
+def get_posted_clips(posted_file="posted.txt"):
+    """
+    Reads the posted.txt file and returns a set of filenames already uploaded.
+    """
+    if not os.path.exists(posted_file):
+        return set()
+    with open(posted_file, "r", encoding="utf-8") as f:
+        return set(f.read().splitlines())
+
+def mark_clip_as_posted(clip_name, posted_file="posted.txt"):
+    """
+    Appends the uploaded clip name to posted.txt
+    """
+    with open(posted_file, "a", encoding="utf-8") as f:
+        f.write(f"{clip_name}\n")
+
+def get_next_unposted_clip(clips_dir="clips", posted_file="posted.txt"):
+    """
+    Returns the next unposted clip filename, or None if all are posted.
+    """
+    posted = get_posted_clips(posted_file)
+    all_clips = sorted(f for f in os.listdir(clips_dir) if f.endswith(".mp4"))
+    for clip in all_clips:
+        if clip not in posted:
+            return clip
+    return None
+
+# === Example usage ===
+clips_dir = "clips"
+next_clip = get_next_unposted_clip(clips_dir)
+
+if next_clip:
+    print(f"📤 Next clip to upload: {next_clip}")
+    
+    # Simulate upload
+    # upload_to_instagram(next_clip)
+
+    # Mark as posted
+    mark_clip_as_posted(next_clip)
+    print(f"✅ Marked {next_clip} as posted in posted.txt")
+else:
+    print("🎉 All clips have been posted.")
